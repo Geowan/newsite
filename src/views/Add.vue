@@ -52,8 +52,12 @@
         </v-form>
        </v-card-text>
       <v-card-actions>
-        <v-spacer></v-spacer>
-        <v-btn color="primary" @click="saveDataM()">Save</v-btn>
+
+        <v-btn small outlined @click="emptyDb()">Empty database</v-btn>
+         <v-spacer></v-spacer>
+        <v-btn class="mr-2" small outlined @click="reset()">Reset data</v-btn>
+        <v-btn color="primary" small @click="saveDataM()">Save</v-btn>
+
       </v-card-actions>
 
     </v-card>
@@ -82,6 +86,19 @@ export default {
     this.getFormData();
   },
   methods:{
+    reset(){
+      this.form.title = "";
+      this.form.images = '';
+      this.form.subtitle  = '';
+      this.form.videos = [{url:''}];
+      this.strip_text = '';
+
+    },
+    emptyDb(){
+      localStorage.removeItem('news');
+      localStorage.removeItem('strip_text');
+      alert("database emptied")
+    },
     async saveDataM(){
       let valid =  await this.$refs.form.validate();
       if(valid){
@@ -90,6 +107,7 @@ export default {
         var savedNews  = JSON.parse(localStorage.getItem("news") || "[]");
         savedNews.push(this.form);
         localStorage.setItem("news", JSON.stringify(savedNews));
+        this.$router.push("/");
       }
 
     },
