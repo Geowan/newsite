@@ -25,7 +25,7 @@
             <v-col md="12">
               <v-row>
                 <v-col md="6">
-                  <v-textarea :rules="requiredRule" outlined dense label="Paste image links here separated by a comma"></v-textarea>
+                  <v-textarea v-model="form.images" :rules="requiredRule" outlined dense label="Paste image links here separated by a comma"></v-textarea>
                 </v-col>
                 <v-col md="6">
                   <v-card class="pa-3 mb-0 pb-0" v-for="(video,key) in form.videos" :key="key">
@@ -68,6 +68,7 @@ export default {
     form:{
       title:'',
       subtitle:'',
+      images:'',
       videos:[{url:''}]
     },
     requiredRule: [
