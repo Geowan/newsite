@@ -6,10 +6,19 @@
         {{strip_text}}
       </marquee>
       <v-card-text>
-        {{newsItem}}
+        <h3>
+          {{newsItem.title}}
+        </h3>
+
+        <p>
+          {{newsItem.subtitle}}
+        </p>
+
       </v-card-text>
       <v-divider></v-divider>
       <v-card-actions>
+        <v-btn small class="text-none" outlined>Full image slide show</v-btn>
+        <v-btn small class="text-none" outlined>Video breaks</v-btn>
         <v-spacer></v-spacer>
         <v-btn small outlined v-if="step > 1" @click="step--"><v-icon left>mdi-arrow-left</v-icon> Back</v-btn>
         <v-btn v-if="step !== news.length" small outlined @click="step++">Next  <v-icon right>mdi-arrow-right</v-icon></v-btn>
