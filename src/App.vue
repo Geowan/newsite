@@ -13,6 +13,33 @@
 
   </v-app>
 </template>
+<script>
+export  default {
+  mounted(){
+    if(
+        this.inIframe() ||
+        (
+            !['http://localhost:8081','http://newsite.soradius.com'].includes(window.location.origin)
+            && (this.$route.path !== '/invalid-licence')
+        )
+
+    ){
+      this.$router.push('/invalid-licence')
+    }
+
+  },
+  methods: {
+    inIframe() {
+      try {
+        return window.self !== window.top;
+      } catch (e) {
+        return true;
+      }
+    }
+  }
+}
+
+</script>
 
 <style lang="scss">
 #app {
