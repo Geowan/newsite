@@ -5,11 +5,12 @@
         Add a news text
       </v-toolbar>
       <v-card-text>
+        step at:
+        {{currentStep}}
         <v-form ref="form" v-model="validForm" lazy-validation>
           <v-row>
             <v-col md="2">
               <h3>  News no {{totalNews+1}}</h3>
-
             </v-col>
             <v-col md="10">
               <v-text-field :rules="requiredRule" outlined dense v-model="strip_text" label="News Strip text"/>
@@ -42,21 +43,24 @@
                   </v-card>
                 </v-col>
               </v-row>
-
-
             </v-col>
-
-
           </v-row>
 
         </v-form>
        </v-card-text>
       <v-card-actions>
+        <v-spacer></v-spacer>
+        <v-btn color="primary" small @click="saveDataM()">{{currentStep != null?'Update':'Save'}} News</v-btn>
+        <v-btn class="mr-2" small outlined @click="reset()">Reset data</v-btn>
+
+        <v-btn small outlined :disabled="totalNews.length === 0 || !currentStep" @click="onBack()">Back</v-btn>
+        <v-btn small outlined @click="onNext()">Next</v-btn>
+
+        <v-btn small outlined @click="onFirst()">First</v-btn>
+        <v-btn small outlined @click="onLast()">Last</v-btn>
 
         <v-btn small outlined @click="emptyDb()">Empty database</v-btn>
-         <v-spacer></v-spacer>
-        <v-btn class="mr-2" small outlined @click="reset()">Reset data</v-btn>
-        <v-btn color="primary" small @click="saveDataM()">Save</v-btn>
+        <v-spacer></v-spacer>
 
       </v-card-actions>
 
@@ -66,15 +70,19 @@
 </template>
 <script>
 import {openDB} from "idb";
+import axios from "axios";
 
 export default {
   data:()=>({
     form:{
+      id:'',
       title:'',
       subtitle:'',
       images:'',
       videos:[{url:''}]
     },
+    news:[],
+    currentStep:null,
     requiredRule: [
       v => !!v || 'This is required',
     ],
@@ -94,28 +102,86 @@ export default {
       this.strip_text = '';
 
     },
+    onFirst(){
+      this.currentStep = 0;
+      this.setFormData();
+    },
+
+    onLast(){
+      this.currentStep = this.news.length;
+      this.setFormData();
+    },
+
+    onNext(){
+      if(!this.currentStep){
+        this.currentStep = 0;
+        return;
+      }
+      if(this.currentStep !== this.news.length){
+        this.currentStep ++;
+        this.setFormData();
+      }
+
+
+    },
+
+    onBack(){
+      if(!this.currentStep){
+        return;
+      }
+      if(this.currentStep !== 0){
+        this.currentStep --;
+        this.setFormData();
+      }
+    },
+
     emptyDb(){
-      localStorage.removeItem('news');
-      localStorage.removeItem('strip_text');
-      alert("database emptied")
+
+      var item = confirm("do you want to empty the database");
+      if(item){
+        axios
+            .post('http://127.0.0.1:8095/index.php',[]);
+
+        window.location.reload();
+      }
     },
     async saveDataM(){
       let valid =  await this.$refs.form.validate();
       if(valid){
+        var bodyFormData = new FormData();
+        this.form.id = this.news.length + 1;
+        bodyFormData.append('title', this.form.title);
+        bodyFormData.append('subtitle', this.form.subtitle);
+        bodyFormData.append('images', this.form.images);
+        bodyFormData.append('id', this.form.id);
+        bodyFormData.append('strip_text', this.strip_text);
+        bodyFormData.append('videos', this.form.videos.map(item=>item.url));
+        await axios
+            .post('http://127.0.0.1:8095/index.php',bodyFormData);
 
-        localStorage.setItem('strip_text', this.strip_text);
-        var savedNews  = JSON.parse(localStorage.getItem("news") || "[]");
-        savedNews.push(this.form);
-        localStorage.setItem("news", JSON.stringify(savedNews));
-        this.$router.push("/");
+        this.$router.push('/');
+
       }
 
     },
     getFormData(){
+      axios
+          .get('http://127.0.0.1:8095/index.php')
+          .then((response)=>{
+            this.totalNews = response.data.length;
+            if(response && response.data.length > 0){
+              this.news = response.data;
+              this.strip_text = response.data[0].strip_text;
+            }
+              console.log("res is ", response);
+              })
       var savedNews  = JSON.parse(localStorage.getItem("news") || "[]");
       this.totalNews = savedNews.length;
 
       this.strip_text = localStorage.getItem('strip_text');
+    },
+    setFormData(){
+
     }
   }
 }
