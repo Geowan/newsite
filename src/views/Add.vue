@@ -140,7 +140,7 @@ export default {
       var item = confirm("do you want to empty the database");
       if(item){
         axios
-            .post('/index.php',[]);
+            .post('https://newsite.soradius.com/data.php',[]);
 
         window.location.reload();
       }
@@ -157,7 +157,7 @@ export default {
         bodyFormData.append('strip_text', this.strip_text);
         bodyFormData.append('videos', this.form.videos.map(item=>item.url));
         await axios
-            .post('/index.php',bodyFormData);
+            .post('https://newsite.soradius.com/data.php',bodyFormData);
 
         this.$router.push('/');
 
@@ -166,7 +166,7 @@ export default {
     },
     getFormData(){
       axios
-          .get('/index.php')
+          .get('https://newsite.soradius.com/data.php')
           .then((response)=>{
             this.totalNews = response.data.length;
             if(response && response.data.length > 0){

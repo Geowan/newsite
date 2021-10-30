@@ -121,7 +121,7 @@ export default {
   },
   mounted() {
     axios
-        .get('/index.php')
+        .get('https://newsite.soradius.com/data.php')
         .then(response => this.news = response.data)
   }
 }
