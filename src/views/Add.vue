@@ -140,7 +140,7 @@ export default {
       var item = confirm("do you want to empty the database");
       if(item){
         axios
-            .post('http://127.0.0.1:8095/index.php',[]);
+            .post('/index.php',[]);
 
         window.location.reload();
       }
@@ -157,7 +157,7 @@ export default {
         bodyFormData.append('strip_text', this.strip_text);
         bodyFormData.append('videos', this.form.videos.map(item=>item.url));
         await axios
-            .post('http://127.0.0.1:8095/index.php',bodyFormData);
+            .post('/index.php',bodyFormData);
 
         this.$router.push('/');
 
@@ -166,7 +166,7 @@ export default {
     },
     getFormData(){
       axios
-          .get('http://127.0.0.1:8095/index.php')
+          .get('/index.php')
           .then((response)=>{
             this.totalNews = response.data.length;
             if(response && response.data.length > 0){

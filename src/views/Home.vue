@@ -121,7 +121,7 @@ export default {
   },
   mounted() {
     axios
-        .get('http://127.0.0.1:8095/index.php')
+        .get('/index.php')
         .then(response => this.news = response.data)
   }
 }
