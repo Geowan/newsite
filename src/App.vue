@@ -19,7 +19,7 @@ export  default {
     if(
         this.inIframe() ||
         (
-            !['http://localhost:8082','https://newsite.soradius.com','http://newsite.soradius.com'].includes(window.location.origin)
+            !['http://localhost:8081','https://newsite.soradius.com','http://newsite.soradius.com'].includes(window.location.origin)
             && (this.$route.path !== '/invalid-licence')
         )
 

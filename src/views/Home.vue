@@ -3,7 +3,7 @@
     <v-card v-if="loading">
       <v-progress-circular indeterminate></v-progress-circular>
     </v-card>
-    <v-card v-else>
+    <v-card @keydown.esc="onEsc()" v-else>
       <v-alert v-if="news.length === 0" type="error"> Currently there are no added news yet</v-alert>
       <v-card v-else>
         <marquee>
@@ -24,7 +24,7 @@
                 </v-card-text>
                 <v-card-text v-else>
 
-                  <vue-gallery-slideshow :images="newsItem.images.replace('\n','').replace(/\s/g, '').split(',')"
+                  <vue-gallery-slideshow :images="galleryImages"
                                          :index="index" @close="index = null" />
 
                 </v-card-text>
@@ -70,7 +70,8 @@
 <script>
 // @ is an alias to /src
 import axios from "axios";
-import VueGallerySlideshow from 'vue-gallery-slideshow';
+import VueGallerySlideshow from "./cmps/ImageGallery.vue";
+
 import AppVideoPlayer from "./AppVideoPlayer";
 export default {
   name: 'Home',
@@ -89,22 +90,31 @@ export default {
     VueGallerySlideshow,
     AppVideoPlayer
   },
+  created(){
+    document.addEventListener('keyup',  (evt)=> {
+      if (evt.keyCode === 27) {
+        this.index = null;
+        this.showImage = true;
+      }
+    });
+  },
   methods:{
+
     back(){
-      this.loading = true;
+    //  this.loading = true;
       setTimeout(()=>{
         this.loading = false;
         this.showImage = true;
         this.step --;
-      },500)
+      },10)
     },
     next(){
-      this.loading = true;
+      //this.loading = true;
       setTimeout(()=>{
         this.loading = false;
         this.showImage = true;
         this.step ++;
-      },500)
+      },10)
     },
     loadVideo(index){
       this.showImage = true;
@@ -117,12 +127,25 @@ export default {
   computed:{
     newsItem(){
       return this.news[this.step -1];
+    },
+    galleryImages(){
+      return this.news[this.step -1].images.replace('\n','')
+          .replace(/\s/g, '').split(',').map((item,key)=>{
+            return {
+              id:key+1,
+              imgSrc:item
+            }
+          });
     }
   },
   mounted() {
+    this.loading = true;
     axios
         .get('https://newsite.soradius.com/data.php')
-        .then(response => this.news = response.data)
+        .then((response)=>{
+          this.loading = false;
+          this.news = response.data
+        })
   }
 }
 </script>

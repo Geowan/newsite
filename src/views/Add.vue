@@ -21,8 +21,20 @@
               <v-text-field :rules="requiredRule" outlined dense v-model="form.title" label="News title"/>
             </v-col>
             <v-col md="12">
-              <v-text-field :rules="requiredRule" outlined dense v-model="form.subtitle" label="News subtitle"/>
-            </v-col>
+              <v-card class="pa-3 mb-0 pb-0" v-for="(subtitle,key) in form.subtitles" :key="key">
+                <v-row>
+                  <v-col md="8">
+                    <v-text-field :rules="requiredRule" outlined dense v-model="subtitle.url" label="News subtitle"/>
+
+                  </v-col>
+                  <v-col md="4" class="d-flex ma-0 pa-0">
+                    <v-btn @click="form.subtitles.push({url:''})" text :ripple="false"><v-icon>mdi-plus</v-icon></v-btn>
+                    <v-btn text :ripple="false" @click="form.subtitles.splice(form.subtitles.indexOf(subtitle),1)"
+                           v-if="form.subtitles.length > 1"><v-icon>mdi-close</v-icon></v-btn>
+                  </v-col>
+                </v-row>
+              </v-card>
+             </v-col>
             <v-col md="12">
               <v-row>
                 <v-col md="6">
@@ -37,7 +49,7 @@
                       <v-col md="4" class="d-flex ma-0 pa-0">
                         <v-btn @click="form.videos.push({url:''})" text :ripple="false"><v-icon>mdi-plus</v-icon></v-btn>
                         <v-btn text :ripple="false" @click="form.videos.splice(form.videos.indexOf(video),1)"
-                               v-if="form.videos.length >0"><v-icon>mdi-close</v-icon></v-btn>
+                               v-if="form.videos.length >1"><v-icon>mdi-close</v-icon></v-btn>
                       </v-col>
                     </v-row>
                   </v-card>
@@ -78,6 +90,7 @@ export default {
       id:'',
       title:'',
       subtitle:'',
+      subtitles:[''],
       images:'',
       videos:[{url:''}]
     },
