@@ -6,10 +6,14 @@
     <v-card @keydown.esc="onEsc()" v-else>
       <v-alert v-if="news.length === 0" type="error"> Currently there are no added news yet</v-alert>
       <v-card v-else>
+        <marquee>
+          {{newsItem.strip_text}}
+        </marquee>
+
         <v-card-text>
           <v-row>
-            <v-col md="5">
-              <breaking-news></breaking-news>
+            <v-col md="8">
+
 
               <v-card v-if="showImage">
                 <v-card-text v-if="!index">
@@ -25,32 +29,29 @@
 
                 </v-card-text>
               </v-card>
+              <v-card v-else>
+                <v-card-text>
+                  <app-video-player :url="videoUrl"/>
+                </v-card-text>
 
-              <v-card v-else dark color="#ce3b3b">
-                <p>
-                  {{newsItem.title}}
-                </p>
-
-
-                <p>
-                  {{newsItem.subtitle}}
-                </p>
               </v-card>
 
 
-
-
             </v-col>
-            <v-col md="7">
+            <v-col md="4">
 
-              <app-video-player :url="videoUrl"/>
+              <h3>
+                {{newsItem.title}}
+              </h3>
+
+              <p>
+                {{newsItem.subtitle}}
+              </p>
             </v-col>
           </v-row>
 
-          <news-footer :news-item="newsItem"></news-footer>
 
         </v-card-text>
-        <div></div>
         <v-divider></v-divider>
         <v-card-actions>
           <v-btn @click="index=1; showImage=true" small class="text-none" outlined>Full image slide show</v-btn>
@@ -72,8 +73,6 @@ import axios from "axios";
 import VueGallerySlideshow from "./cmps/ImageGallery.vue";
 
 import AppVideoPlayer from "./AppVideoPlayer";
-import BreakingNews from "./cmps/BreakingNews";
-import NewsFooter from "./cmps/NewsFooter";
 export default {
   name: 'Home',
   data:()=>({
@@ -81,30 +80,28 @@ export default {
     step:1,
     strip_text:'',
     index:null,
-    showImage:false,
+    showImage:true,
     video:0,
     videoUrl:'',
     loading:false
 
   }),
   components:{
-    BreakingNews,
     VueGallerySlideshow,
-    NewsFooter,
     AppVideoPlayer
   },
   created(){
     document.addEventListener('keyup',  (evt)=> {
       if (evt.keyCode === 27) {
         this.index = null;
-        this.showImage = false;
+        this.showImage = true;
       }
     });
   },
   methods:{
 
     back(){
-    //  this.loading = true;
+      //  this.loading = true;
       setTimeout(()=>{
         this.loading = false;
         this.showImage = true;
@@ -144,7 +141,6 @@ export default {
   mounted() {
     this.loading = true;
     axios
-        //.get('http://127.0.0.1:8096')
         .get('https://newsite.soradius.com/data.php')
         .then((response)=>{
           this.loading = false;
